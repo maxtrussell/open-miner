@@ -7,10 +7,10 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "include/stb_image.h"
+#include <include/stb_image.h>
 
-#include "src/camera.h"
-#include "src/shader.h"
+#include <src/camera.hpp>
+#include <src/shader.hpp>
 
 using namespace std;
 

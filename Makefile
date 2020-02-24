@@ -1,9 +1,14 @@
 CPPC=g++
-CPPFLAGS=-Wall -I include -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl lib/*.c src/*.cpp
+FLAGS=-Wall -I . -I include -lglfw3 -lGL -lX11 -lpthread -lXrandr -lXi -ldl \
+	  -lsfml-system -lsfml-network
+DEPS=lib/*.c src/camera.cpp src/shader.cpp src/client/client.cpp src/server/server.cpp
 BIN=bin/main
 
+build:
+	$(CPPC) src/main.cpp $(DEPS) -o $(BIN) $(FLAGS)
+
 client_engine:
-	$(CPPC) client_engine.cpp -o $(BIN) $(CPPFLAGS)
+	$(CPPC) src/client/client_engine.cpp $(DEPS) -o $(BIN) $(FLAGS)
 
 run:
 	./$(BIN)

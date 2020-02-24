@@ -1,4 +1,4 @@
-#include "shader.h"
+#include "shader.hpp"
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     // 1. Retrieve vertex/fragment source code from filepath

@@ -45,7 +45,7 @@ public:
         float pitch = 0.0f,
         float speed = 2.5f,
         float sensitivity = 0.1f,
-        float fov = 45.0f
+        float fov = 70.0f
     );
 
     glm::mat4 getViewMatrix();
