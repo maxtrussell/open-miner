@@ -16,6 +16,15 @@ Server::Server(int port, int maxConnections)
         std::cout << "Server: Listening on port " << port << std::endl;
         running = true;
     }
+
+    // TODO: Populate, hack
+    for (int i = 0; i < maxConnections; i++) {
+        Entity ent;
+        entities.push_back(ent);
+
+        Client c;
+        clients.push_back(c);
+    }
 }
 
 void Server::run(sf::Time timeout) {
@@ -65,14 +74,26 @@ void Server::handleIncomingConnection(sf::IpAddress ip, int port) {
         }
     }
     
-    // Add client to slot
+    // Get client id
     unsigned int i;
     for (i = 0; i < clients.size(); i++) {
         if (!clients[i].connected)
             break;
     }
-    Client client = { i, ip, port, true };
-    clients.push_back(client);
+
+    // Get client entityId
+    Entity clientEnt;
+    clientEnt.alive = true;
+    unsigned int j;
+    for (j = 0; j < entities.size(); j++) {
+        if (!entities[j].alive)
+            break;
+    }
+
+    // Add client to clients and entities
+    Client client = { i, j, ip, port, true };
+    clients[i] = client;
+    entities[client.entityId] = clientEnt;
     connections++;
 
     // Broadcast player arrival
