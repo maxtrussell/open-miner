@@ -45,10 +45,9 @@ int main(int argc, char *argv[]) {
         sf::IpAddress serverIp("127.0.0.1");
         Client client(serverIp, PORT);
         client.connect();
-
         // TODO
         while (true)
-            ;
+            client.update();
     }
 
     return 0;

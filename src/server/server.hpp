@@ -40,5 +40,7 @@ class Server {
         bool running = false;
         std::vector<Client> clients;
 
+        void handleDisconnect(sf::Packet packet);
         void handleIncomingConnection(sf::IpAddress, int port);
+        void broadcast(sf::Packet packet);
 };

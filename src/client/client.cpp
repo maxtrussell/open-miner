@@ -39,6 +39,20 @@ bool Client::connect() {
     return false;
 }
 
+void Client::update() {
+    Request req; 
+    while (listen(req)) {
+        switch(req.type) {
+            case SERVER_REQUEST_TYPE::PLAYER_JOIN:
+                handlePlayerJoin(req.packet);
+                break;
+            case SERVER_REQUEST_TYPE::PLAYER_LEAVE:
+                handlePlayerLeave(req.packet);
+                break;
+        }
+    }
+}
+
 bool Client::listen(Request &response) {
     sf::IpAddress ip;
     unsigned short port;
@@ -47,4 +61,16 @@ bool Client::listen(Request &response) {
        return true; 
     }
     return false;
+}
+
+void Client::handlePlayerJoin(sf::Packet packet) {
+    int id;
+    packet >> id;
+    std::cout << "Client: Player has joined: " << id << std::endl;
+}
+
+void Client::handlePlayerLeave(sf::Packet packet) {
+    int id;
+    packet >> id;
+    std::cout << "Client: Player has disconnected: " << id << std::endl;
 }

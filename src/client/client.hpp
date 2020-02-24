@@ -10,6 +10,7 @@ class Client {
     public:
         Client(sf::IpAddress ip, int port);
         bool connect();
+        void update();
 
     private:
         struct Request {
@@ -26,4 +27,6 @@ class Client {
         bool connected = false;
 
         bool listen(Request &response);
+        void handlePlayerJoin(sf::Packet packet);
+        void handlePlayerLeave(sf::Packet packet);
 };
