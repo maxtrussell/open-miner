@@ -90,18 +90,18 @@ void Server::handleIncomingConnection(sf::IpAddress ip, int port) {
             break;
     }
 
-    // Add client to clients and entities
-    Client client = { i, j, ip, port, true };
-    clients[i] = client;
-    entities[client.entityId] = clientEnt;
-    connections++;
-
     // Broadcast player arrival
+    Client client = { i, j, ip, port, true };
     sf::Packet broadcastPack;
     broadcastPack << SERVER_REQUEST_TYPE::PLAYER_JOIN
                   << client.id;
     broadcast(broadcastPack);
     
+    // Add client to clients and entities
+    clients[i] = client;
+    entities[client.entityId] = clientEnt;
+    connections++;
+
     // Alert player connection was successful
     sf::Packet packet;
     packet << SERVER_REQUEST_TYPE::CONNECT_REQUEST_RESULT
@@ -109,7 +109,7 @@ void Server::handleIncomingConnection(sf::IpAddress ip, int port) {
            << client.id;
     socket.send(packet, ip, port);
 
-    std::cout << "Server: Connection reqeust from client accepted, ID: " << client.id << " ("
+    std::cout << "Server: Connection request from client accepted, ID: " << client.id << " ("
         << ip << ":" << port << ")" << std::endl;
 
 }
