@@ -8,7 +8,7 @@
 
 class Client {
     public:
-        Client(sf::IpAddress ip, int port);
+        Client(sf::IpAddress ip = sf::IpAddress::LocalHost, int port = 5003);
         bool connect();
         void update();
 

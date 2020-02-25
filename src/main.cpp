@@ -4,8 +4,9 @@
 
 #include <SFML/Network/IpAddress.hpp>
 
-#include "client/client.hpp"
-#include "server/server.hpp"
+#include <src/client/client.hpp>
+#include <src/client/engine.hpp>
+#include <src/server/server.hpp>
 
 // TODO: config
 int PORT = 5003;
@@ -43,11 +44,8 @@ int main(int argc, char *argv[]) {
     if (mode == Mode::CLIENT) {
         std::cout << "Starting in client mode" << std::endl;
         sf::IpAddress serverIp("127.0.0.1");
-        Client client(serverIp, PORT);
-        client.connect();
-        // TODO
-        while (true)
-            client.update();
+        Engine clientEngine(serverIp, PORT);
+        clientEngine.run();
     }
 
     return 0;
