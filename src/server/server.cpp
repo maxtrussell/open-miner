@@ -39,10 +39,10 @@ void Server::listen() {
     if (socket.receive(req.packet, req.ip, req.port) == sf::Socket::Done) {
         req.packet >> req.type;
         switch (req.type) {
-            case CLIENT_REQUEST_TYPE::CONNECT:
+            case ClientRequest::CONNECT:
                 handleIncomingConnection(req.ip, req.port);
                 break;
-            case CLIENT_REQUEST_TYPE::DISCONNECT:
+            case ClientRequest::DISCONNECT:
                 handleDisconnect(req.packet);
                 break;
         }
@@ -53,8 +53,8 @@ void Server::handleIncomingConnection(sf::IpAddress ip, int port) {
     if (connections >= maxConnections) {
         // Reject, server full
         sf::Packet packet;
-        packet << SERVER_REQUEST_TYPE::CONNECT_REQUEST_RESULT
-               << CONNECTION_RESULT::GAME_FULL;
+        packet << ServerRequest::CONNECT_REQUEST_RESULT
+               << ConnectionResult::GAME_FULL;
         socket.send(packet, ip, port);
         std::cout << "Server: Connection reqeust from client rejected, server full ("
                   << ip << ":" << port << ")" << std::endl;
@@ -66,8 +66,8 @@ void Server::handleIncomingConnection(sf::IpAddress ip, int port) {
         Client c = clients[i];
         if (c.connected && c.ip == ip && c.port == port) {
             sf::Packet packet;
-            packet << SERVER_REQUEST_TYPE::CONNECT_REQUEST_RESULT
-                   << CONNECTION_RESULT::DUPLICATE_ID;
+            packet << ServerRequest::CONNECT_REQUEST_RESULT
+                   << ConnectionResult::DUPLICATE_ID;
             socket.send(packet, ip, port);
             std::cout << "Server: Connection reqeust from client rejected, duplicate id ("
                       << ip << ":" << port << ")" << std::endl;
@@ -93,7 +93,7 @@ void Server::handleIncomingConnection(sf::IpAddress ip, int port) {
     // Broadcast player arrival
     Client client = { i, j, ip, port, true };
     sf::Packet broadcastPack;
-    broadcastPack << SERVER_REQUEST_TYPE::PLAYER_JOIN
+    broadcastPack << ServerRequest::PLAYER_JOIN
                   << client.id;
     broadcast(broadcastPack);
     
@@ -104,8 +104,8 @@ void Server::handleIncomingConnection(sf::IpAddress ip, int port) {
 
     // Alert player connection was successful
     sf::Packet packet;
-    packet << SERVER_REQUEST_TYPE::CONNECT_REQUEST_RESULT
-           << CONNECTION_RESULT::SUCCESS
+    packet << ServerRequest::CONNECT_REQUEST_RESULT
+           << ConnectionResult::SUCCESS
            << client.id;
     socket.send(packet, ip, port);
 
@@ -131,7 +131,7 @@ void Server::handleDisconnect(sf::Packet packet) {
 
     // Broadcast player disconnect
     sf::Packet broadcastPack;
-    broadcastPack << SERVER_REQUEST_TYPE::PLAYER_LEAVE << id;
+    broadcastPack << ServerRequest::PLAYER_LEAVE << id;
     broadcast(broadcastPack);
 
     // Mark player disconnected

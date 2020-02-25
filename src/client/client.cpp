@@ -9,25 +9,25 @@ Client::Client(sf::IpAddress ip, int port)
 bool Client::connect() {
     // Make request packet
     sf::Packet packet;
-    packet << CLIENT_REQUEST_TYPE::CONNECT;
+    packet << ClientRequest::CONNECT;
 
     // Send request
     if (socket.send(packet, serverIp, serverPort) == sf::Socket::Done) {
         Request response;
         if (listen(response)) {
-            CONNECTION_RESULT result;
+            ConnectionResult result;
             response.packet >> result;
             switch(result) {
-                case CONNECTION_RESULT::SUCCESS:
+                case ConnectionResult::SUCCESS:
                     response.packet >> id;
                     connected = true;
                     std::cout << "Connected, ID: " << id << std::endl;
                     socket.setBlocking(false);
                     return true;
-                case CONNECTION_RESULT::GAME_FULL:
+                case ConnectionResult::GAME_FULL:
                     std::cout << "Could not connect. Server is full." << std::endl;
                     break;
-                case CONNECTION_RESULT::DUPLICATE_ID:
+                case ConnectionResult::DUPLICATE_ID:
                     std::cout << "Unable to join on same connection and port" << std::endl;
                     break;
             }
@@ -43,10 +43,10 @@ void Client::update() {
     Request req; 
     while (listen(req)) {
         switch(req.type) {
-            case SERVER_REQUEST_TYPE::PLAYER_JOIN:
+            case ServerRequest::PLAYER_JOIN:
                 handlePlayerJoin(req.packet);
                 break;
-            case SERVER_REQUEST_TYPE::PLAYER_LEAVE:
+            case ServerRequest::PLAYER_LEAVE:
                 handlePlayerLeave(req.packet);
                 break;
         }

@@ -15,7 +15,7 @@ class Client {
     private:
         struct Request {
             sf::Packet packet;
-            SERVER_REQUEST_TYPE type;
+            ServerRequest type;
         };
 
         sf::IpAddress serverIp;

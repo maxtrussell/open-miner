@@ -9,7 +9,7 @@
 #include <SFML/System/Clock.hpp>
 
 #include <src/common/net/requests.hpp>
-#include <src/server/entity.hpp>
+#include <src/common/game/entity.hpp>
 
 class Server {
     public:
@@ -22,7 +22,7 @@ class Server {
     private:
         struct Request {
             sf::Packet packet;
-            CLIENT_REQUEST_TYPE type;
+            ClientRequest type;
             sf::IpAddress ip;
             unsigned short port;
         };
