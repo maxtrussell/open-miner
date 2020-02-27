@@ -31,6 +31,8 @@ void Server::run(sf::Time timeout) {
     while (running) {
         std::this_thread::sleep_for(std::chrono::milliseconds(30));
         listen();
+        // update(); TODO
+        broadcastWorld();
     }
 }
 
@@ -129,12 +131,31 @@ void Server::handleDisconnect(sf::Packet packet) {
     int id;
     packet >> id;
 
-    // Broadcast player disconnect
-    sf::Packet broadcastPack;
-    broadcastPack << ServerRequest::PLAYER_LEAVE << id;
-    broadcast(broadcastPack);
+    std::cout << "Server: Disconnect request from player: " << id << std::endl;
 
     // Mark player disconnected
     clients[id].connected = false;
     connections--;
+
+    // Broadcast player disconnect
+    sf::Packet broadcastPack;
+    broadcastPack << ServerRequest::PLAYER_LEAVE << id;
+    broadcast(broadcastPack);
+}
+
+void Server::broadcastWorld() {
+    // 1. Send out player info
+    // Start with just position, but later we'll want dir
+    sf::Packet entityPacket;
+    entityPacket << ServerRequest::ENTITY_UPDATE << connections;
+    for (int i = 0; i < clients.size(); i++) {
+        Entity e = entities[i];
+        if (!clients[i].connected)
+            continue;
+        entityPacket << i << e.position.x << e.position.y << e.position.z;
+    }
+    broadcast(entityPacket);
+
+    // 2. Send out world updates
+    // TODO
 }

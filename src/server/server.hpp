@@ -27,8 +27,8 @@ class Server {
             unsigned short port;
         };
         struct Client {
-            unsigned int id;
-            unsigned int entityId;
+            int id;
+            int entityId;
             sf::IpAddress ip;
             int port;
             bool connected;
@@ -45,4 +45,5 @@ class Server {
         void handleDisconnect(sf::Packet packet);
         void handleIncomingConnection(sf::IpAddress, int port);
         void broadcast(sf::Packet packet);
+        void broadcastWorld();
 };

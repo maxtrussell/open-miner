@@ -30,7 +30,7 @@ class Engine {
 
         Camera camera;
         GLFWwindow* window;
-        Client client;
+        Client* client;
 
         void framebufferSizeCallback(int width, int height);
         void mouseCallback(double xPos, double yPos);

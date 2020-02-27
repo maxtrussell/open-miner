@@ -12,7 +12,8 @@ enum class ServerRequest : uint8_t {
     CONNECT_REQUEST_RESULT,
     PLAYER_JOIN,
     PLAYER_LEAVE,
-    WORLD_STATE,
+    ENTITY_UPDATE,
+    WORLD_UPDATE,
 }; 
 
 enum class ConnectionResult : uint8_t {

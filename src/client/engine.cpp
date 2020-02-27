@@ -3,8 +3,8 @@
 
 Engine::Engine(sf::IpAddress ip, int port) {
     // Init client
-    Client client(ip, port);
-    client.connect();
+    client = new Client(ip, port);
+    client->connect();
 
     // Init glfw
     glfwInit();
@@ -41,6 +41,7 @@ Engine::Engine(sf::IpAddress ip, int port) {
 // Main client loop
 void Engine::run() {
     while (!glfwWindowShouldClose(window)) {
+        client->update();
         processInput();
 
         // TODO: Draw stuff
@@ -51,6 +52,7 @@ void Engine::run() {
         glfwSwapBuffers(window);
         glfwPollEvents();
     } 
+    client->disconnect();
 
     // Cleanly exit
     glfwTerminate();
