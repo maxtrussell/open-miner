@@ -25,18 +25,28 @@ Server::Server(int port, int maxConnections)
         Client c;
         clients.push_back(c);
     }
+
+    // Start the game clock
+    glfwInit();
 }
 
 void Server::run(sf::Time timeout) {
     while (running) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(30));
-        listen();
+        // Calculate deltaTime
+        float currFrame = glfwGetTime();
+        deltaTime = currFrame - lastFrame;
+        lastFrame = currFrame;
+
+        listen(deltaTime);
         // update(); TODO
         broadcastWorld();
+
+        // Wait as necessary for tick
+        tick(glfwGetTime() - currFrame);
     }
 }
 
-void Server::listen() {
+void Server::listen(float deltaTime) {
     Request req;
     while (socket.receive(req.packet, req.ip, req.port) == sf::Socket::Done) {
         req.packet >> req.type;
@@ -47,8 +57,8 @@ void Server::listen() {
             case ClientRequest::DISCONNECT:
                 handleDisconnect(req.packet);
                 break;
-            case ClientRequest::UPDATE_POSITION:
-                handleUpdatePosition(req.packet);
+            case ClientRequest::KEY_INPUT:
+                handleClientInput(req.packet, deltaTime);
                 break;
         }
     }
@@ -88,10 +98,10 @@ void Server::handleIncomingConnection(sf::IpAddress ip, int port) {
 
     // Get client entityId
     Entity clientEnt;
-    clientEnt.alive = true;
+    clientEnt.active = true;
     unsigned int j;
     for (j = 0; j < entities.size(); j++) {
-        if (!entities[j].alive)
+        if (!entities[j].active)
             break;
     }
 
@@ -163,13 +173,17 @@ void Server::broadcastWorld() {
     // TODO
 }
 
-void Server::handleUpdatePosition(sf::Packet p) {
+void Server::handleClientInput(sf::Packet p, float deltaTime) {
     int clientId;
-    float x, y, z;
-    p >> clientId >> x >> y >> z;
-    Client* c = &clients[clientId];
-    int clientEntId = c->entityId;
-    Entity* e = &entities[clientEntId];
-    e->position = glm::vec3(x, y, z);
-    std::cout << x << y << z << std::endl;
+    Movement m;
+    p >> clientId >> m;
+    Client c = clients[clientId];
+    Entity* e = &entities[c.entityId];
+    e->handleMovement(m, deltaTime);
+}
+
+void Server::tick(float elapsedTime) {
+    int sleepTime = (tickLength - elapsedTime) * 1000;  // milliseconds
+    if (sleepTime > 0)
+        std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
 }

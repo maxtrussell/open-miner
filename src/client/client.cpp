@@ -50,7 +50,7 @@ bool Client::connect() {
 
 void Client::update() {
     Request req; 
-    if (listen(req)) {
+    while (listen(req)) {
         switch(req.type) {
             case ServerRequest::PLAYER_JOIN:
                 handlePlayerJoin(req.packet);
@@ -100,50 +100,44 @@ void Client::handleEntityUpdate(sf::Packet packet) {
         int entityId;
         float x, y, z;
         packet >> entityId >> x >> y >> z;
-        if (entityId == id)  // if self
-            continue;
         Entity* ep = &entities[entityId];
         ep->position = glm::vec3(x, y, z);
-        ep->alive = true;
+        ep->active = true;
+        if (i == id)
+            // update own entity
+            entity = &entities[entityId];
     }
 }
 
-// TODO: handle movemnt in the server
-void Client::handleInput(GLFWwindow* window, int deltaTime) {
-    bool moved = false;
+void Client::handleInput(GLFWwindow* window) {
+    Movement m = Movement::NONE;
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        entity->handleMovement(Movement::FORWARD, deltaTime);
-        moved = true;
+        m = Movement::FORWARD;
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        entity->handleMovement(Movement::LEFT, deltaTime);
-        moved = true;
+        m = Movement::LEFT;
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        entity->handleMovement(Movement::BACKWARD, deltaTime);
-        moved = true;
+        m = Movement::BACKWARD;
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        entity->handleMovement(Movement::RIGHT, deltaTime);
-        moved = true;
+        m = Movement::RIGHT;
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        entity->handleMovement(Movement::UP, deltaTime);
-        moved = true;
+        m = Movement::UP;
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-        entity->handleMovement(Movement::DOWN, deltaTime);
-        moved = true;
+        m = Movement::DOWN;
     }
-    if (moved)
-        updatePosition();
+    if (m != Movement::NONE)
+        sendInput(m);
 }
 
-void Client::updatePosition() {
+void Client::sendInput(Movement m) {
     sf::Packet p;
-    p << ClientRequest::UPDATE_POSITION << id
-      << entity->position.x << entity->position.y << entity->position.z;
+    p << ClientRequest::KEY_INPUT << id << m;
     socket.send(p, serverIp, serverPort);
 }

@@ -47,7 +47,14 @@ void Engine::run() {
 
         // Client stuff
         client->update();
-        client->handleInput(window, deltaTime);
+        client->handleInput(window);
+
+        // DEBUG stuff
+        Entity ep = *client->entity;
+        std::cout << "Position: <" << ep.position.x
+                  << ", " << ep.position.y << ", "
+                  << ep.position.z << ">" << std::endl;
+
 
         // TODO: Draw stuff
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

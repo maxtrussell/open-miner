@@ -18,7 +18,9 @@ class Client {
         bool connect();
         void disconnect();
         void update();
-        void handleInput(GLFWwindow* window, int deltaTime);
+        void handleInput(GLFWwindow* window);
+
+        Entity* entity = new Entity();
 
     private:
         struct Request {
@@ -34,7 +36,6 @@ class Client {
 
         int serverPort;
         int id;
-        Entity* entity = new Entity();
 
         bool connected = false;
 
@@ -42,5 +43,5 @@ class Client {
         void handlePlayerJoin(sf::Packet packet);
         void handlePlayerLeave(sf::Packet packet);
         void handleEntityUpdate(sf::Packet packet);
-        void updatePosition();
+        void sendInput(Movement m);
 };

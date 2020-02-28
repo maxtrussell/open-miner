@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 
 enum Movement {
+    NONE,
     FORWARD,
     BACKWARD,
     LEFT,
@@ -17,7 +18,7 @@ class Entity {
         void handleMovement(Movement direction, float deltaTime);
 
         glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-        bool alive = false;
+        bool active = false;
 
     private:
         glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
