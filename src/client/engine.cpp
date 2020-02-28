@@ -50,10 +50,12 @@ void Engine::run() {
         client->handleInput(window);
 
         // DEBUG stuff
+        /*
         Entity ep = *client->entity;
         std::cout << "Position: <" << ep.position.x
                   << ", " << ep.position.y << ", "
                   << ep.position.z << ">" << std::endl;
+        */
 
 
         // TODO: Draw stuff

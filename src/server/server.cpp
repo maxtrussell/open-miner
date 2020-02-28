@@ -47,6 +47,7 @@ void Server::run(sf::Time timeout) {
 }
 
 void Server::listen(float deltaTime) {
+    // TODO: ensure to only accept one client move per tick
     Request req;
     while (socket.receive(req.packet, req.ip, req.port) == sf::Socket::Done) {
         req.packet >> req.type;
@@ -147,7 +148,11 @@ void Server::handleDisconnect(sf::Packet packet) {
     std::cout << "Server: Disconnect request from player: " << id << std::endl;
 
     // Mark player disconnected
-    clients[id].connected = false;
+    Client* c = &clients[id];
+    c->connected = false;
+
+    Entity* e = &entities[c->entityId];
+    e->active = false;
     connections--;
 
     // Broadcast player disconnect
