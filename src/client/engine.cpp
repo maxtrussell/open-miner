@@ -41,25 +41,28 @@ Engine::Engine(sf::IpAddress ip, int port) {
 // Main client loop
 void Engine::run() {
     while (!glfwWindowShouldClose(window)) {
+        // Calculate deltaTime
+        float currFrame = glfwGetTime();
+        deltaTime = currFrame - lastFrame;
+
         client->update();
-        processInput();
+        client->handleInput(window, deltaTime);
 
         // TODO: Draw stuff
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        // Draw scree
+        // Draw screen
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        // Wait as necessary for tick
+        tick(glfwGetTime() - currFrame);
     } 
     client->disconnect();
 
     // Cleanly exit
     glfwTerminate();
-}
-
-void Engine::processInput() {
-    // TODO
 }
 
 void Engine::framebufferSizeCallback(int width, int height) {
@@ -68,4 +71,10 @@ void Engine::framebufferSizeCallback(int width, int height) {
 
 void Engine::mouseCallback(double xPos, double yPos) {
     // TODO
+}
+
+void Engine::tick(float elapsedTime) {
+    int sleepTime = (tickLength - elapsedTime) * 1000;  // milliseconds
+    if (sleepTime > 0)
+        std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
 }

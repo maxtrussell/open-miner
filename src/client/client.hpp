@@ -2,6 +2,9 @@
 
 #include <array>
 
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Network/UdpSocket.hpp>
@@ -15,6 +18,7 @@ class Client {
         bool connect();
         void disconnect();
         void update();
+        void handleInput(GLFWwindow* window, int deltaTime);
 
     private:
         struct Request {
@@ -30,6 +34,7 @@ class Client {
 
         int serverPort;
         int id;
+        Entity* entity = new Entity();
 
         bool connected = false;
 

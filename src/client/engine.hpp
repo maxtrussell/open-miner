@@ -1,6 +1,8 @@
 #pragma once
 
+#include <chrono>
 #include <iostream>
+#include <thread>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -9,7 +11,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <SFML/Network/IpAddress.hpp>
 
-#include <src/camera.hpp>
 #include <src/shader.hpp>
 #include <src/client/client.hpp>
 
@@ -27,12 +28,13 @@ class Engine {
         bool hasFocus = false;
         float lastX = screenWidth / 2.0f;
         float lastY = screenHeight / 2.0f;
+        float tickLength = 0.05f;
 
-        Camera camera;
         GLFWwindow* window;
         Client* client;
 
         void framebufferSizeCallback(int width, int height);
         void mouseCallback(double xPos, double yPos);
         void processInput();
+        void tick(float elapsedTime);
 };
