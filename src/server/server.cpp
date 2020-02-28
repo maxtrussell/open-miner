@@ -38,7 +38,7 @@ void Server::run(sf::Time timeout) {
 
 void Server::listen() {
     Request req;
-    if (socket.receive(req.packet, req.ip, req.port) == sf::Socket::Done) {
+    while (socket.receive(req.packet, req.ip, req.port) == sf::Socket::Done) {
         req.packet >> req.type;
         switch (req.type) {
             case ClientRequest::CONNECT:
@@ -46,6 +46,9 @@ void Server::listen() {
                 break;
             case ClientRequest::DISCONNECT:
                 handleDisconnect(req.packet);
+                break;
+            case ClientRequest::UPDATE_POSITION:
+                handleUpdatePosition(req.packet);
                 break;
         }
     }
@@ -158,4 +161,15 @@ void Server::broadcastWorld() {
 
     // 2. Send out world updates
     // TODO
+}
+
+void Server::handleUpdatePosition(sf::Packet p) {
+    int clientId;
+    float x, y, z;
+    p >> clientId >> x >> y >> z;
+    Client* c = &clients[clientId];
+    int clientEntId = c->entityId;
+    Entity* e = &entities[clientEntId];
+    e->position = glm::vec3(x, y, z);
+    std::cout << x << y << z << std::endl;
 }

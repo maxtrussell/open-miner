@@ -110,24 +110,40 @@ void Client::handleEntityUpdate(sf::Packet packet) {
 
 // TODO: handle movemnt in the server
 void Client::handleInput(GLFWwindow* window, int deltaTime) {
+    bool moved = false;
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         entity->handleMovement(Movement::FORWARD, deltaTime);
+        moved = true;
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         entity->handleMovement(Movement::LEFT, deltaTime);
+        moved = true;
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         entity->handleMovement(Movement::BACKWARD, deltaTime);
+        moved = true;
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         entity->handleMovement(Movement::RIGHT, deltaTime);
+        moved = true;
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         entity->handleMovement(Movement::UP, deltaTime);
+        moved = true;
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
         entity->handleMovement(Movement::DOWN, deltaTime);
+        moved = true;
     }
+    if (moved)
+        updatePosition();
+}
+
+void Client::updatePosition() {
+    sf::Packet p;
+    p << ClientRequest::UPDATE_POSITION << id
+      << entity->position.x << entity->position.y << entity->position.z;
+    socket.send(p, serverIp, serverPort);
 }

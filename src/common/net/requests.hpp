@@ -6,6 +6,7 @@ enum class ClientRequest : uint8_t {
    CONNECT,
    DISCONNECT,
    KEYINPUT,
+   UPDATE_POSITION,
 }; 
 
 enum class ServerRequest : uint8_t {

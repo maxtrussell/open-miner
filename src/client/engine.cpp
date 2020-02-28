@@ -45,6 +45,7 @@ void Engine::run() {
         float currFrame = glfwGetTime();
         deltaTime = currFrame - lastFrame;
 
+        // Client stuff
         client->update();
         client->handleInput(window, deltaTime);
 

@@ -42,4 +42,5 @@ class Client {
         void handlePlayerJoin(sf::Packet packet);
         void handlePlayerLeave(sf::Packet packet);
         void handleEntityUpdate(sf::Packet packet);
+        void updatePosition();
 };

@@ -44,6 +44,7 @@ class Server {
 
         void handleDisconnect(sf::Packet packet);
         void handleIncomingConnection(sf::IpAddress, int port);
+        void handleUpdatePosition(sf::Packet p);
         void broadcast(sf::Packet packet);
         void broadcastWorld();
 };
